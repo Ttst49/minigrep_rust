@@ -1,9 +1,11 @@
 use std::error::Error;
 use std::fs;
+use std::env;
 
 pub struct Config{
     pub search_arg: String,
-    pub file_name: String
+    pub file_name: String,
+    pub case_sensitive: bool
 }
 
 impl Config {
@@ -15,14 +17,22 @@ impl Config {
         let search_arg = args[1].clone();
         let file_name = args[2].clone();
 
-        Ok(Config{search_arg, file_name})
+        let case_sensitive = env::var("MINIGREP_CASE_SENSITIVE").is_err();
+
+        Ok(Config{search_arg, file_name,case_sensitive})
     }
 }
 
 pub fn run( config: Config)-> Result<(),Box<dyn Error>>{
     let content = fs::read_to_string(config.file_name)?;
 
-    for line in search_content(&config.search_arg, &content) {
+    let results = if config.case_sensitive {
+        search_content(&config.search_arg, &content)
+    } else {
+        search_content_not_case_sensitive(&config.search_arg, &content)
+    };
+
+    for line in results {
         println!("{}",line)
     }
 
