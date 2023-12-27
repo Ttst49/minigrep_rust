@@ -28,8 +28,16 @@ pub fn run( config: Config)-> Result<(),Box<dyn Error>>{
     Ok(())
 }
 
-pub fn search_content<'a>(search : &str, content: &str)-> Vec<&'a str>{
-    vec![]
+pub fn search_content<'a>(search : &str, content: &'a str)-> Vec<&'a str>{
+    let mut result = Vec::new();
+
+    for line in content.lines() {
+        if line.contains(search) {
+            result.push(line)
+        }
+    }
+
+    result
 }
 
 #[cfg(test)]
@@ -40,9 +48,9 @@ mod tests{
     fn one_result(){
         let search = "duct";
         let content = "\
-            Rust:
-            sécurité, rapidité, productivité.
-            Obtenez les trois en même temps.";
+Rust:
+sécurité, rapidité, productivité.
+Obtenez les trois en même temps.";
 
         assert_eq!(
             vec!["sécurité, rapidité, productivité."],
