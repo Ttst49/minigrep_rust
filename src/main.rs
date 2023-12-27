@@ -15,10 +15,14 @@ fn main() {
     println!("le contenu de {} est : '{}'",file_name,content)
 }
 
+struct Config{
+    search_arg: String,
+    file_name: String
+}
 
-fn interpreter_config(args : &[String])->(&str, &str){
-    let search_arg = &args[1];
-    let file_name = &args[2];
+fn interpreter_config(args : &[String])->Config{
+    let search_arg = args[1].clone();
+    let file_name = args[2].clone();
 
-    (search_arg, file_name)
+    Config{search_arg, file_name}
 }
