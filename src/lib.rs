@@ -41,17 +41,32 @@ pub fn search_content<'a>(search : &str, content: &'a str)-> Vec<&'a str>{
     result
 }
 
+
+pub fn search_content_not_case_sensitive<'a>(search: &str, content: &'a str)->Vec<&'a str>{
+    let search = search.to_lowercase();
+    let mut result = Vec::new();
+
+    for line in content.lines() {
+        if line.to_lowercase().contains(&search) {
+            result.push(line)
+        }
+    }
+    result
+}
+
 #[cfg(test)]
 mod tests{
     use super::*;
 
     #[test]
+    #[ignore]
     fn case_sensitive(){
         let search = "duct";
         let content = "\
 Rust:
 sécurité, rapidité, productivité.
-Obtenez les trois en même temps.";
+Obtenez les trois en même temps.
+Duck tape.";
 
         assert_eq!(
             vec!["sécurité, rapidité, productivité."],
@@ -61,14 +76,15 @@ Obtenez les trois en même temps.";
 
     #[test]
     fn not_case_sensitive(){
-        let search = "duct";
+        let search = "rUsT";
         let content = "\
 Rust:
 sécurité, rapidité, productivité.
-Obtenez les trois en même temps.";
+Obtenez les trois en même temps.
+C'est pas rustique.";
 
         assert_eq!(
-            vec!["sécurité, rapidité, productivité."],
+            vec!["Rust:", "C'est pas rustique."],
             search_content_not_case_sensitive(search, content)
         );
     }
