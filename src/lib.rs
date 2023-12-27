@@ -27,3 +27,27 @@ pub fn run( config: Config)-> Result<(),Box<dyn Error>>{
 
     Ok(())
 }
+
+pub fn search_content<'a>(search : &str, content: &str)-> Vec<&'a str>{
+    vec![]
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn one_result(){
+        let search = "duct";
+        let content = "\
+            Rust:
+            sécurité, rapidité, productivité.
+            Obtenez les trois en même temps.";
+
+        assert_eq!(
+            vec!["sécurité, rapidité, productivité."],
+            search_content(search, content)
+        );
+    }
+
+}
