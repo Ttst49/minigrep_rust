@@ -22,8 +22,9 @@ impl Config {
 pub fn run( config: Config)-> Result<(),Box<dyn Error>>{
     let content = fs::read_to_string(config.file_name)?;
 
-
-    println!("le contenu est : '{}'",content);
+    for line in search_content(&config.search_arg, &content) {
+        println!("{}",line)
+    }
 
     Ok(())
 }
@@ -45,7 +46,7 @@ mod tests{
     use super::*;
 
     #[test]
-    fn one_result(){
+    fn case_sensitive(){
         let search = "duct";
         let content = "\
 Rust:
@@ -55,6 +56,20 @@ Obtenez les trois en même temps.";
         assert_eq!(
             vec!["sécurité, rapidité, productivité."],
             search_content(search, content)
+        );
+    }
+
+    #[test]
+    fn not_case_sensitive(){
+        let search = "duct";
+        let content = "\
+Rust:
+sécurité, rapidité, productivité.
+Obtenez les trois en même temps.";
+
+        assert_eq!(
+            vec!["sécurité, rapidité, productivité."],
+            search_content_not_case_sensitive(search, content)
         );
     }
 
