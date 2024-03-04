@@ -10,12 +10,21 @@ pub struct Config{
 
 impl Config {
     pub fn new(mut args : env::Args)->Result<Config, &'static str> {
+        args.next();
+
         if args.len() < 3 {
             return Err("Il n'y a pas assez d'arguments")
         }
 
-        let search_arg = args[1].clone();
-        let file_name = args[2].clone();
+        let search_arg = match args.next() {
+            Some(arg) => arg,
+            None=> return Err("Pas de chaine de caractère présente")
+        };
+
+        let file_name = match args.next() {
+            Some(arg)=>arg,
+            None=> return Err("Pas de nom de fichier présent")
+        };
 
         let case_sensitive = env::var("MINIGREP_CASE_SENSITIVE").is_err();
 
@@ -40,28 +49,18 @@ pub fn run( config: Config)-> Result<(),Box<dyn Error>>{
 }
 
 pub fn search_content<'a>(search : &str, content: &'a str)-> Vec<&'a str>{
-    let mut result = Vec::new();
-
-    for line in content.lines() {
-        if line.contains(search) {
-            result.push(line)
-        }
-    }
-
-    result
+    content
+        .lines()
+        .filter(|line| line.contains(search))
+        .collect()
 }
 
 
 pub fn search_content_not_case_sensitive<'a>(search: &str, content: &'a str)->Vec<&'a str>{
-    let search = search.to_lowercase();
-    let mut result = Vec::new();
-
-    for line in content.lines() {
-        if line.to_lowercase().contains(&search) {
-            result.push(line)
-        }
-    }
-    result
+    content
+        .lines()
+        .filter(|line| line.contains(search.to_lowercase()))
+        .collect()
 }
 
 #[cfg(test)]
